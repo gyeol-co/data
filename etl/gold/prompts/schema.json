@@ -1,0 +1,42 @@
+{
+  "type": "object",
+  "properties": {
+    "sub_category": {
+      "type": "string",
+      "description": "Product sub-category from the valid options list"
+    },
+    "sub_category_detail": {
+      "type": "string",
+      "description": "Short Korean item type label without brand or color (e.g., 봄버 재킷, 트렌치코트, 크루넥 스웨트셔츠)"
+    },
+    "fit": {
+      "type": "string",
+      "nullable": true,
+      "description": "One of: slim, regular, relaxed, oversized. Omit when not applicable or not visible"
+    },
+    "material": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Short Korean material labels, deduplicated, usually 1-3 items (e.g., 코튼, 린넨 혼방, 스웨이드)"
+    },
+    "style": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Style tags from the exact allowed taxonomy only (e.g., workwear, vintage, military)"
+    },
+    "pattern": {
+      "type": "string",
+      "description": "Pattern type in English (e.g., solid, stripe, check, camo, print)"
+    },
+    "details": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "2-5 short Korean construction or silhouette details, excluding color and material repetition"
+    },
+    "description_ko": {
+      "type": "string",
+      "description": "Short Korean semantic summary in 1-2 sentences. Complements structured fields instead of enumerating them. Avoid starting with the brand name. Factual, compact, no marketing fluff"
+    }
+  },
+  "required": ["sub_category", "sub_category_detail", "material", "style", "pattern", "details", "description_ko"]
+}

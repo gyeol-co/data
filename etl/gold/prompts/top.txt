@@ -1,0 +1,20 @@
+Category: top (상의)
+Valid sub_categories: {subs}
+
+Analyze focusing on:
+- Neckline (crew, v-neck, collar, turtle, hood, henley)
+- Sleeve (short, long, sleeveless, 3/4)
+- Fabric weight (lightweight, mid, heavy)
+- Layering suitability (base, mid, standalone)
+
+Good example:
+- Prefer sub_category_detail like "그래픽 티셔츠", "링거 티셔츠", "크루넥 스웨트셔츠", "워크 셔츠".
+- Good description_ko: "가볍게 단독으로 입기 좋은 상의입니다. 그래픽과 네크라인 디테일이 빈티지한 캐주얼 무드를 또렷하게 만든다."
+- Better description_ko: "가볍게 입기 좋은 상의입니다. 전면 그래픽과 네크라인 인상이 빈티지한 캐주얼 무드를 만든다."
+- Better description_ko: "전면 인상이 또렷한 상의입니다. 그래픽이나 넥 디테일이 단독 착용 시 분위기를 분명하게 만든다."
+- Worse description_ko: "코튼 소재로 제작된 반팔 티셔츠입니다. 크루넥과 그래픽 프린트가 있어 다양한 스타일에 활용하기 좋습니다."
+
+Avoid:
+- Generic labels such as "티셔츠", "상의", "맨투맨" when a more specific type is obvious
+- Description that repeats every field like material, sleeve, neckline, and style one by one
+- Banned phrases such as "단독 착용 또는 레이어드 용이합니다", "활용하기 좋습니다", "캐주얼하게 연출할 수 있습니다"

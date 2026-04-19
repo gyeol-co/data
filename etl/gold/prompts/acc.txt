@@ -1,0 +1,20 @@
+Category: acc (액세서리)
+Valid sub_categories: {subs}
+
+Analyze focusing on:
+- Primary function and usage
+- Size and dimensions
+- Carry method if applicable (hand, shoulder, crossbody, waist)
+- fit is NOT applicable — omit fit
+
+Good example:
+- Prefer sub_category_detail like "토트백", "크로스백", "워치캡", "레더 벨트" rather than broad labels.
+- Good description_ko: "실용적인 구조와 휴대 방식이 분명한 액세서리입니다. 표면 질감과 형태가 전체 스타일의 분위기를 또렷하게 정리해준다."
+- Better description_ko: "표면 질감과 금속 부자재 인상이 또렷한 액세서리입니다. 형태가 단순해도 스타일의 결을 선명하게 잡아준다."
+- Better description_ko: "형태와 부자재 인상이 또렷한 액세서리입니다. 작은 면적만으로도 착장의 결을 정리하는 역할이 크다."
+- Worse description_ko: "스웨이드 소재로 제작된 벨트입니다. 버클 디테일이 있어 포인트를 더하기 좋습니다."
+
+Avoid:
+- Returning a fit value or null fit placeholder
+- Generic labels such as "가방", "모자", "액세서리" when a more specific type is obvious
+- Banned phrases such as "포인트를 더하기 좋습니다", "매치하기 좋습니다", "스타일리시한 연출"

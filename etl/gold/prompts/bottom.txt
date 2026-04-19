@@ -1,0 +1,20 @@
+Category: bottom (하의)
+Valid sub_categories: {subs}
+
+Analyze focusing on:
+- Rise (low, mid, high)
+- Leg shape (straight, tapered, wide, slim, bootcut)
+- Waist type (belt loop, elastic, drawstring)
+- Length (full, ankle, shorts)
+
+Good example:
+- Prefer sub_category_detail like "스트레이트 진", "밀리터리 팬츠", "드로스트링 팬츠", "투턱 슬랙스".
+- If herringbone, stripe, check, camo, or denim texture is clearly visible or stated, reflect that in pattern instead of defaulting to solid.
+- Good description_ko: "여유 있게 떨어지는 실루엣이 중심인 하의입니다. 원단의 결감과 포켓 구성이 빈티지한 작업복 무드를 더한다."
+- Better description_ko: "허리에서 곧게 떨어지는 실루엣이 또렷한 하의입니다. 원단의 결감과 워싱 인상이 빈티지한 분위기를 만든다."
+- Worse description_ko: "코튼 소재의 팬츠입니다. 벨트 고리와 포켓, 버튼 플라이 디테일이 있으며 다양한 스타일에 활용하기 좋습니다."
+
+Avoid:
+- Generic labels such as "팬츠", "바지" when a more specific type is obvious
+- pattern = solid when herringbone, stripe, check, camo, or print is clearly present
+- Banned phrases such as "개성을 살릴 수 있습니다", "다양하게 활용하기 좋습니다"

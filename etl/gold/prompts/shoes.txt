@@ -1,0 +1,20 @@
+Category: shoes (신발)
+Valid sub_categories: {subs}
+
+Analyze focusing on:
+- Sole type and construction
+- Upper material
+- Closure (lace, slip-on, strap, zip)
+- Height (low, mid, high)
+- fit is NOT applicable — omit fit
+
+Good example:
+- Prefer sub_category_detail like "페니 로퍼", "서비스 부츠", "러너 스니커즈", "독일군 스니커즈".
+- Good description_ko: "낮은 갑피와 단정한 라인이 또렷한 신발입니다. 소재의 표면감과 밑창 구조가 클래식한 인상을 만든다."
+- Better description_ko: "낮은 갑피와 둥근 앞코가 또렷한 신발입니다. 표면의 질감과 스트랩 구성이 무드를 분명하게 만든다."
+- Worse description_ko: "가죽 소재로 제작된 샌들입니다. 버클 스트랩 디테일이 있어 스타일리시한 연출이 가능합니다."
+
+Avoid:
+- Returning a fit value or null fit placeholder
+- Generic labels such as "신발", "부츠", "스니커즈" when a more specific type is obvious
+- Banned phrases such as "스타일리시한 연출", "편안하면서도 개성 있는", "무드를 연출합니다"
