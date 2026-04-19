@@ -1,0 +1,24 @@
+# 크롤링 대상 브랜드 목록
+# platform → brand_id → url (브랜드 페이지 URL)
+
+# etcseoul:
+#   tonywack: https://www.etcseoul.com/product/list.html?cate_no=413
+#   artifacts: https://www.etcseoul.com/product/list.html?cate_no=686
+#   rough_side : https://www.etcseoul.com/product/list.html?cate_no=1407
+
+# barbershop:
+#   dehen1920: https://barbershop.co.kr/product/list.html?cate_no=295
+#   goodfolks: https://barbershop.co.kr/product/list.html?cate_no=298
+#   olow: https://barbershop.co.kr/product/list.html?cate_no=284
+
+bastong:
+  bastong: https://m.bastong.co.kr
+
+modeman:
+  orslow: https://mode-man.com/product/list.html?cate_no=434
+
+# sculpstore:
+#   needles: https://sculpstore.com/product/brand.html?cate_no=189
+#   warehouse: https://sculpstore.com/product/brand.html?cate_no=215
+#   kaptain_sunshine: https://sculpstore.com/product/brand.html?cate_no=297
+

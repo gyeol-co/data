@@ -1,0 +1,182 @@
+networks:
+  gyeol-net:
+    external: true
+    name: gyeol-net
+
+volumes:
+  embedding-cache:
+    name: embedding-cache
+  reranker-cache:
+    name: reranker-cache
+  airflow-meta-data:
+    name: airflow-meta-data
+  airflow-logs:
+    name: airflow-logs
+  airflow-dag-bundles:
+    name: airflow-dag-bundles
+
+x-airflow-common: &airflow-common
+  build:
+    context: .
+    dockerfile: Dockerfile.airflow
+  image: gyeol/airflow:3.2.0
+  environment: &airflow-env
+    AIRFLOW__CORE__EXECUTOR: LocalExecutor
+    AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+    AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+    AIRFLOW__CORE__DAGS_FOLDER: /opt/airflow/dags
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-meta:5432/airflow
+    AIRFLOW__API__SECRET_KEY: gyeol-airflow-dev-secret
+    AIRFLOW__API_AUTH__JWT_SECRET: gyeol-airflow-dev-jwt-secret
+    AIRFLOW__API__BASE_URL: http://airflow-api-server:8080
+    AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-api-server:8080/execution/
+    AIRFLOW__LOGGING__LOGGING_LEVEL: INFO
+    PYTHONPATH: /opt/airflow:/opt/airflow/dags
+    DB_URL: postgresql://gyeol:${POSTGRES_PASSWORD:-gyeol_secret}@postgres:5432/gyeol
+    AIRFLOW_CONN_GYEOL_POSTGRES: postgresql://gyeol:${POSTGRES_PASSWORD:-gyeol_secret}@postgres:5432/gyeol
+  volumes:
+    - ./dags:/opt/airflow/dags
+    - ./orchestration:/opt/airflow/orchestration
+    - ./pipelines:/opt/airflow/pipelines
+    - ./workers:/opt/airflow/workers
+    - ./common:/opt/airflow/common
+    - ./etl:/opt/airflow/etl
+    - ./crawlers:/opt/airflow/crawlers
+    - ./brands.yaml:/opt/airflow/brands.yaml:ro
+    - airflow-logs:/opt/airflow/logs
+    - airflow-dag-bundles:/opt/airflow/dag_bundles
+  user: "${AIRFLOW_UID:-50000}:0"
+  networks: [gyeol-net]
+
+services:
+  # 임베딩 서빙 (TEI, Blackwell 태그)
+  embedding:
+    image: ghcr.io/huggingface/text-embeddings-inference:120-1.9
+    container_name: embedding
+    restart: unless-stopped
+    command:
+      - --model-id=BAAI/bge-m3
+      - --dtype=float16
+      - --max-batch-tokens=16384
+      - --max-concurrent-requests=512
+      - --port=80
+    volumes:
+      - embedding-cache:/data
+    ports:
+      - "8080:80"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    networks: [gyeol-net]
+
+  # ───────────────── Airflow (3.2.0) ─────────────────
+  airflow-meta:
+    image: postgres:16
+    container_name: airflow-meta
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - airflow-meta-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks: [gyeol-net]
+
+  airflow-init:
+    <<: *airflow-common
+    container_name: airflow-init
+    depends_on:
+      airflow-meta:
+        condition: service_healthy
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        airflow db migrate && \
+        (airflow users create --username admin --password admin \
+          --firstname admin --lastname admin --role Admin --email admin@gyeol.local || true) && \
+        (airflow pools set crawl_pool 3 "Crawler concurrency" || true)
+    restart: "no"
+
+  airflow-scheduler:
+    <<: *airflow-common
+    container_name: airflow-scheduler
+    command: scheduler
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-dag-processor:
+    <<: *airflow-common
+    container_name: airflow-dag-processor
+    command: dag-processor
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-triggerer:
+    <<: *airflow-common
+    container_name: airflow-triggerer
+    command: triggerer
+    restart: unless-stopped
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  airflow-api-server:
+    <<: *airflow-common
+    container_name: airflow-api-server
+    command: api-server
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    depends_on:
+      airflow-init:
+        condition: service_completed_successfully
+
+  # 리랭커 서빙 (TEI, 동일 이미지) — embedding과 GPU 0 공유, GPU 1은 학습용
+  reranker:
+    image: ghcr.io/huggingface/text-embeddings-inference:120-1.9
+    container_name: reranker
+    restart: unless-stopped
+    command:
+      - --model-id=BAAI/bge-reranker-v2-m3
+      - --dtype=float16
+      - --max-batch-tokens=16384
+      - --max-concurrent-requests=256
+      - --port=80
+    volumes:
+      - reranker-cache:/data
+    ports:
+      - "8081:80"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ["0"]
+              capabilities: [gpu]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 180s
+    networks: [gyeol-net]

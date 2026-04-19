@@ -1,0 +1,60 @@
+category:
+  outer:
+    - jacket
+    - coat
+    - blazer
+    - vest
+    - down
+    - blouson
+    - fleece
+  top:
+    - tee
+    - shirt
+    - hoodie
+    - sweatshirt
+    - knit
+    - polo
+    - cardigan
+  bottom:
+    - pants
+    - jeans
+    - slacks
+    - shorts
+  acc:
+    - bag
+    - hat
+    - belt
+    - wallet
+    - scarf
+    - socks
+    - jewelry
+  shoes:
+    - sneaker
+    - boots
+    - loafer
+    - sandal
+    - derby
+
+fit:
+  - slim
+  - regular
+  - relaxed
+  - oversized
+
+style:
+  - american_casual
+  - amekaji
+  - street
+  - dandy
+  - minimalism
+  - classic
+  - workwear
+  - techwear
+  - preppy
+  - rock_chic
+  - outdoor
+  - military
+  - gorpcore
+  - heritage
+  - normcore
+  - vintage

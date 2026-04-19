@@ -1,0 +1,61 @@
+# ── Python ──
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.ruff_cache/
+.pytest_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# ── 가상환경 ──
+.venv/
+venv/
+env/
+
+# ── Secrets / credentials ──
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+client_secret*.json
+*credentials*.json
+gcp-*.json
+aws-*.json
+
+# ── Data / artifacts (대용량, 재생 가능) ──
+store/
+fashion/
+runs/
+checkpoints/
+logs/
+*.log
+*.pt
+*.pth
+*.safetensors
+*.onnx
+*.bin
+
+# ── 학습 모델 체크포인트 ──
+models/
+
+# ── Claude Code 로컬 설정 ──
+.claude/settings.local.json
+
+# ── IDE / OS ──
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Misc ──
+tmp/
+.tmp/
