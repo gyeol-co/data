@@ -49,12 +49,13 @@ def slugify(name: str) -> str:
 
 _BRAND_UPSERT_SQL = """
 INSERT INTO public.brand (
-    slug, name, name_ko, description, styles, website_url, product_added
+    slug, platform, name, name_ko, description, styles, website_url, product_added
 ) VALUES (
-    %(slug)s, %(name)s, %(name_ko)s, %(description)s,
+    %(slug)s, %(platform)s, %(name)s, %(name_ko)s, %(description)s,
     %(styles)s, %(website_url)s, now()
 )
 ON CONFLICT (slug) DO UPDATE SET
+    platform      = EXCLUDED.platform,
     name          = EXCLUDED.name,
     name_ko       = COALESCE(EXCLUDED.name_ko, public.brand.name_ko),
     description   = COALESCE(EXCLUDED.description, public.brand.description),
@@ -75,6 +76,7 @@ def upsert_brand(conn: psycopg.Connection, staging_brand: dict) -> uuid.UUID:
     description = staging_brand.get("description_curated") or staging_brand.get("description")
     params = {
         "slug": slug,
+        "platform": staging_brand.get("platform"),
         "name": staging_brand["name"],
         "name_ko": staging_brand.get("name_ko"),
         "description": description,
@@ -211,6 +213,7 @@ SELECT
     p.search_text,
     p.embedding,
     b.id           AS staging_brand_id,
+    b.platform     AS brand_platform,
     b.name         AS brand_name,
     b.name_eng     AS brand_name_eng,
     b.name_ko      AS brand_name_ko,
@@ -254,7 +257,8 @@ def publish_batch(limit: int = 100) -> dict:
             "original_price", "discounted_price", "thumbnail_key", "image_keys",
             "description", "description_curated", "enrichment_meta", "url",
             "search_text", "embedding",
-            "staging_brand_id", "brand_name", "brand_name_eng", "brand_name_ko",
+            "staging_brand_id", "brand_platform",
+            "brand_name", "brand_name_eng", "brand_name_ko",
             "brand_description_raw", "brand_description_curated",
             "brand_styles", "brand_url",
         ]
@@ -272,6 +276,7 @@ def publish_batch(limit: int = 100) -> dict:
                     public_brand_id = upsert_brand(
                         conn,
                         {
+                            "platform": row["brand_platform"],
                             "name": row["brand_name"],
                             "name_eng": row["brand_name_eng"],
                             "name_ko": row["brand_name_ko"],
