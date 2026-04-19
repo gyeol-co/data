@@ -1,0 +1,55 @@
+# Codex 스킬 정의. Go worker가 이 파일을 읽어 통합 executor로 실행.
+
+brand_profile:
+  scope_fields: [platform, brand_name]
+  done_query: |
+    SELECT CASE
+      WHEN description IS NOT NULL
+       AND styles IS NOT NULL AND array_length(styles, 1) > 0
+       AND name_ko IS NOT NULL
+      THEN 0 ELSE 1
+    END
+    FROM staging.brand
+    WHERE platform = :platform AND name = :brand_name
+  prompt: |
+    $gyeol-brand-profile {platform} {brand_name}
+    Target row scope: platform={platform}, exact_name={brand_name}.
+    Use that exact staging.brand row, do not ask follow-up questions,
+    and update description, styles, and name_ko.
+  max_iterations: 1
+  max_stalls: 1
+  timeout_per_call: 300s
+
+category_review:
+  scope_fields: [platform, brand_id]
+  done_query: |
+    SELECT count(*) FROM staging.product
+    WHERE platform = :platform
+      AND platform_brand_id = :brand_id
+      AND category IS NULL
+  prompt: |
+    $gyeol-silver-category-review
+    platform={platform} brand_id={brand_id}
+    category IS NULL 인 상품 50개씩 처리. direct psql UPDATE.
+    최종 답변은 updated_rows 만.
+  max_iterations: 100
+  max_stalls: 1
+  timeout_per_call: 600s
+
+base_name_review:
+  scope_fields: [platform, brand_id]
+  applicable_platforms: [sculpstore, modeman]
+  done_query: |
+    SELECT count(*) FROM staging.product
+    WHERE platform = :platform
+      AND platform_brand_id = :brand_id
+      AND color IS NULL
+  prompt: |
+    $gyeol-silver-base-name-review
+    platform={platform} brand_id={brand_id}
+    상품명 보고 같은 제품의 색상 변형을 판단해 base_name / color 채움.
+    color IS NULL 인 것 50개씩, direct psql UPDATE.
+    원본 casing 유지. 최종 답변은 updated_rows 만.
+  max_iterations: 100
+  max_stalls: 1
+  timeout_per_call: 600s

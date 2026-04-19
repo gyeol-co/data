@@ -1,0 +1,20 @@
+platform: barbershop
+type: select_shop
+schedule: "0 3 * * *"
+
+crawler: BarbershopCrawler
+
+silver:
+  transform: BarbershopTransform
+  steps:
+    - clean_name
+    - extract_base_name
+    - extract_color
+    - validate_price
+
+codex_skills:
+  - brand_profile
+  - category_review
+
+gold:
+  enabled: true

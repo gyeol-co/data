@@ -1,0 +1,20 @@
+platform: modeman
+type: select_shop
+schedule: "0 3 * * *"
+
+crawler: ModemanCrawler
+
+silver:
+  transform: ModemanTransform
+  steps:
+    - clean_name
+    - validate_price
+    # base_name / color: regex 추출 불가 → codex가 채움 (아래 base_name_review)
+
+codex_skills:
+  - brand_profile
+  - category_review
+  - base_name_review
+
+gold:
+  enabled: true
