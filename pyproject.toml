@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Data pipelines for Gyeol"
 requires-python = ">=3.12"
 dependencies = [
+  "certifi>=2026.10.19",
   "beautifulsoup4>=4.13.4",
   "datasets>=4.8.4",
   "httpx>=0.28.1",
